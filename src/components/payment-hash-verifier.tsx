@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
@@ -13,21 +13,41 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip"
 import { parseInvoice } from "../utils/invoices"
-import { ArrowLeft, CheckCircle2, XCircle, Shield, Copy, Zap } from "lucide-react"
+import { PAYMENT_HASH_VERIFIER_ROUTE } from "../utils/app-routes"
+import { ArrowLeft, CheckCircle2, XCircle, Shield, Copy, Zap, Share2 } from "lucide-react"
+
+export interface VerifierInitialData {
+  invoice?: string
+  preimage?: string
+  autoRun?: boolean
+}
 
 export interface PaymentHashVerifierProps {
   onNavigateHome?: () => void
   className?: string
+  initialData?: VerifierInitialData
 }
 
-// Helper to hash a preimage using SHA-256
+// Helper to hash a preimage using SHA-256.
+// Lightning preimages are 32 raw bytes. When the input is a hex string we must
+// decode it to those raw bytes BEFORE hashing — hashing the ASCII hex characters
+// produces the wrong digest. Non-hex (plain text) input is hashed as UTF-8.
 async function sha256(message: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(message)
+  const trimmed = message.trim()
+  let data: Uint8Array
+  const isHex = /^[0-9a-fA-F]+$/.test(trimmed) && trimmed.length % 2 === 0
+  if (isHex) {
+    data = new Uint8Array(trimmed.length / 2)
+    for (let i = 0; i < trimmed.length; i += 2) {
+      data[i / 2] = parseInt(trimmed.slice(i, i + 2), 16)
+    }
+  } else {
+    data = new TextEncoder().encode(trimmed)
+  }
   const hashBuffer = await crypto.subtle.digest("SHA-256", data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
-  return hashHex
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
 }
 
 // Helper to extract payment hash from decoded invoice data
@@ -69,22 +89,28 @@ function extractPaymentHash(data: Record<string, any>): string | null {
 const PaymentHashVerifier: React.FC<PaymentHashVerifierProps> = ({
   onNavigateHome,
   className,
+  initialData,
 }) => {
-  const [invoiceInput, setInvoiceInput] = useState("")
+  const [invoiceInput, setInvoiceInput] = useState(initialData?.invoice ?? "")
   const [paymentHash, setPaymentHash] = useState<string | null>(null)
-  const [preimageInput, setPreimageInput] = useState("")
+  const [preimageInput, setPreimageInput] = useState(initialData?.preimage ?? "")
   const [verificationResult, setVerificationResult] = useState<"match" | "no-match" | null>(null)
   const [computedHash, setComputedHash] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isVerifying, setIsVerifying] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
   const preimageRef = useRef<HTMLInputElement>(null)
 
-  const handleDecodeInvoice = async () => {
-    if (!invoiceInput.trim()) {
+  // Decode an invoice and return its payment hash, or null on failure.
+  // Accepts an optional override so callers (deep-link auto-run) can decode
+  // before state has propagated.
+  const handleDecodeInvoice = async (rawInvoice?: string): Promise<string | null> => {
+    const invoice = (rawInvoice ?? invoiceInput).trim()
+    if (!invoice) {
       setError("Please enter a Lightning invoice")
-      return
+      return null
     }
 
     setIsLoading(true)
@@ -94,41 +120,49 @@ const PaymentHashVerifier: React.FC<PaymentHashVerifierProps> = ({
     setComputedHash(null)
 
     try {
-      const result = await parseInvoice(invoiceInput)
+      const result = await parseInvoice(invoice)
 
       if (result?.error) {
         setError(result.error)
-        return
+        return null
       }
 
       if (!result?.data) {
         setError("Could not decode this invoice")
-        return
+        return null
       }
 
       const hash = extractPaymentHash(result.data)
       if (!hash) {
         setError("No payment hash found in this invoice. Make sure it is a BOLT11 or BOLT12 invoice.")
-        return
+        return null
       }
 
       setPaymentHash(hash)
       // Focus on preimage input after successful decode
       setTimeout(() => preimageRef.current?.focus(), 100)
+      return hash
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to decode invoice")
+      return null
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleVerify = async () => {
-    if (!preimageInput.trim()) {
+  // Verify a preimage against a payment hash. Accepts optional overrides so
+  // the deep-link auto-run can chain directly with the hash just returned by
+  // handleDecodeInvoice, without waiting for React state to settle.
+  const handleVerify = async (rawPreimage?: string, overrideHash?: string): Promise<void> => {
+    const preimage = (rawPreimage ?? preimageInput).trim()
+    const hashToCompare = overrideHash ?? paymentHash
+
+    if (!preimage) {
       setError("Please enter a preimage")
       return
     }
 
-    if (!paymentHash) {
+    if (!hashToCompare) {
       setError("Please decode an invoice first")
       return
     }
@@ -139,11 +173,11 @@ const PaymentHashVerifier: React.FC<PaymentHashVerifierProps> = ({
     setComputedHash(null)
 
     try {
-      const hash = await sha256(preimageInput)
+      const hash = await sha256(preimage)
       setComputedHash(hash)
 
       // Normalize payment hash for comparison (remove spaces, lowercase)
-      const normalizedPaymentHash = paymentHash.replace(/\s/g, "").toLowerCase()
+      const normalizedPaymentHash = hashToCompare.replace(/\s/g, "").toLowerCase()
       const normalizedComputedHash = hash.toLowerCase()
 
       if (normalizedComputedHash === normalizedPaymentHash) {
@@ -174,6 +208,44 @@ const PaymentHashVerifier: React.FC<PaymentHashVerifierProps> = ({
     setComputedHash(null)
     setError(null)
   }
+
+  // Build a shareable deep-link that reproduces this verification state.
+  const buildShareLink = useCallback(() => {
+    const params = new URLSearchParams()
+    if (invoiceInput.trim()) params.set("q", invoiceInput.trim())
+    if (preimageInput.trim()) params.set("preimage", preimageInput.trim())
+    const base = `${window.location.origin}/${PAYMENT_HASH_VERIFIER_ROUTE}`
+    return qs ? `${base}?${qs}` : base
+  }, [invoiceInput, preimageInput])
+
+  const handleShareLink = async () => {
+    const link = buildShareLink()
+    try {
+      await navigator.clipboard.writeText(link)
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 2000)
+    } catch {
+ // clipboard unavailable — still surface the link so the user can copy manually
+      window.prompt("Copy this link:", link)
+    }
+  }
+
+  // Deep-link auto-run: when initialData.autoRun is set, decode the invoice
+  // then verify the preimage immediately so the shareable link lands on the
+  // result without an extra click.
+  useEffect(() => {
+ if (!initialData?.autoRun) return
+ if (!initialData.invoice || !initialData.preimage) return
+ const invoice = initialData.invoice
+ const preimage = initialData.preimage
+ setInvoiceInput(invoice)
+ setPreimageInput(preimage)
+ void (async () => {
+ const hash = await handleDecodeInvoice(invoice)
+ if (hash) await handleVerify(preimage, hash)
+ })()
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className={className}>
@@ -339,7 +411,16 @@ const PaymentHashVerifier: React.FC<PaymentHashVerifierProps> = ({
         </Card>
 
         {/* Actions */}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={handleShareLink}
+            disabled={!invoiceInput.trim() && !preimageInput.trim()}
+            className="gap-2"
+          >
+            <Share2 className="h-4 w-4" />
+            {linkCopied ? "Link copied!" : "Share Link"}
+          </Button>
           <Button variant="outline" onClick={handleClear}>
             Clear All
           </Button>

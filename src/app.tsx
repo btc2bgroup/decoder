@@ -9,6 +9,7 @@ import { Dialog, DialogContent } from "./components/ui/dialog"
 import { parseInvoice } from "./utils/invoices"
 import {
   getInvoiceFromUrl,
+  getVerifierParams,
   isPaymentHashVerifierRoute,
   PAYMENT_HASH_VERIFIER_ROUTE,
 } from "./utils/app-routes"
@@ -23,6 +24,11 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [qrScannerOpen, setQrScannerOpen] = useState(false)
   const [paymentHashVerifierOpen, setPaymentHashVerifierOpen] = useState(false)
+  const [verifierInitial, setVerifierInitial] = useState<{
+    invoice?: string
+    preimage?: string
+    autoRun?: boolean
+  } | null>(null)
   const [shouldLiftContent, setShouldLiftContent] = useState(false)
   const [idleTopOffset, setIdleTopOffset] = useState(128)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -32,6 +38,10 @@ function App() {
   useEffect(() => {
     if (isPaymentHashVerifierRoute(window.location.pathname)) {
       setPaymentHashVerifierOpen(true)
+      const { invoice, preimage } = getVerifierParams(window.location.search)
+      if (invoice || preimage) {
+        setVerifierInitial({ invoice, preimage, autoRun: !!invoice && !!preimage })
+      }
       return
     }
 
@@ -285,7 +295,10 @@ function App() {
         onOpenChange={handlePaymentHashVerifierOpenChange}
       >
         <DialogContent className="max-h-[90vh] overflow-y-auto bg-[hsl(var(--background))] text-[hsl(var(--foreground))] sm:max-w-4xl">
-          <PaymentHashVerifier onNavigateHome={handleNavigateHome} />
+          <PaymentHashVerifier
+            onNavigateHome={handleNavigateHome}
+            initialData={verifierInitial ?? undefined}
+          />
         </DialogContent>
       </Dialog>
     </div>
