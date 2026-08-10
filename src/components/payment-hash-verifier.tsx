@@ -287,7 +287,7 @@ const PaymentHashVerifier: React.FC<PaymentHashVerifierProps> = ({
                 onKeyDown={(e) => e.key === "Enter" && handleDecodeInvoice()}
               />
               <Button
-                onClick={handleDecodeInvoice}
+                onClick={() => handleDecodeInvoice()}
                 disabled={isLoading || !invoiceInput.trim()}
                 className="gap-2"
               >
@@ -357,7 +357,7 @@ const PaymentHashVerifier: React.FC<PaymentHashVerifierProps> = ({
                 onKeyDown={(e) => e.key === "Enter" && handleVerify()}
               />
               <Button
-                onClick={handleVerify}
+                onClick={() => handleVerify()}
                 disabled={isVerifying || !paymentHash || !preimageInput.trim()}
                 variant={verificationResult === "match" ? "default" : "secondary"}
                 className="gap-2"
