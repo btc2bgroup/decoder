@@ -176,7 +176,7 @@ function App() {
   const errorTone = error?.toLowerCase().includes("please enter") ? "warning" : "error"
 
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
+    <div className="btc2b-page flex min-h-screen flex-col overflow-x-hidden">
       <LayoutGroup>
         <main className="container mx-auto w-full max-w-4xl px-4 pb-8">
           <motion.section
@@ -186,8 +186,7 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            {/* Full-bleed navy hero: breaks out of the centered column to span the viewport */}
-            <div className="btc2b-hero relative left-1/2 w-screen -translate-x-1/2">
+            <div>
               <motion.div
                 aria-hidden="true"
                 className="shrink-0"
@@ -243,7 +242,7 @@ function App() {
                     transition={{ duration: 0.22, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="flex items-center gap-3 border border-border border-l-4 border-l-orange bg-card p-4 text-card-foreground shadow-sm">
+                    <div className="flex items-center gap-3 border border-white/10 border-l-4 border-l-orange bg-white/5 p-4 text-card-foreground backdrop-blur-sm">
                       <Loader2 className="h-4 w-4 animate-spin text-orange" />
                       <div>
                         <p className="text-sm font-medium">Decoding request</p>
@@ -277,7 +276,7 @@ function App() {
                     transition={{ duration: 0.22, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <InvoiceDetails type={invoiceType} data={invoiceData} className="border-t-4 border-t-orange" />
+                    <InvoiceDetails type={invoiceType} data={invoiceData} className="border-white/10 border-t-4 border-t-orange bg-white/5 backdrop-blur-sm" />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -286,7 +285,7 @@ function App() {
         </main>
       </LayoutGroup>
 
-      <footer className="mt-auto w-full border-t border-border bg-card">
+      <footer className="mt-auto w-full border-t border-white/10 bg-black/20">
         <div className="container mx-auto flex w-full max-w-4xl flex-col items-start justify-between gap-3 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
           <a
             href="https://btc2bgroup.com"

@@ -116,16 +116,17 @@
 }
 
 @layer components {
-  /* Navy hero band with the BTC2B grid overlay and orange glow */
-  .btc2b-hero {
+  /* Whole-page navy gradient with the BTC2B grid overlay and orange glow */
+  .btc2b-page {
     position: relative;
-    overflow: hidden;
+    isolation: isolate;
+    min-height: 100vh;
     color: #fff;
     background:
       radial-gradient(ellipse at 70% 20%, rgba(244, 121, 32, 0.18) 0%, transparent 55%),
       linear-gradient(135deg, hsl(var(--navy-dark)) 0%, hsl(var(--navy)) 100%);
   }
-  .btc2b-hero::before {
+  .btc2b-page::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -134,9 +135,9 @@
       repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255, 255, 255, 0.025) 60px, rgba(255, 255, 255, 0.025) 61px);
     pointer-events: none;
   }
-  .btc2b-hero::after {
+  .btc2b-page::after {
     content: '';
-    position: absolute;
+    position: fixed;
     right: -180px;
     bottom: -180px;
     width: 520px;
@@ -145,9 +146,9 @@
     background: radial-gradient(circle, rgba(244, 121, 32, 0.14) 0%, transparent 70%);
     pointer-events: none;
   }
-  .btc2b-hero > * {
-    position: relative;
-    z-index: 1;
+  .btc2b-page::before,
+  .btc2b-page::after {
+    z-index: -1;
   }
 
   .eyebrow {

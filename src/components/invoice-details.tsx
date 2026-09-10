@@ -320,7 +320,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
   )
 
   const renderTagBadge = (value: string) => (
-    <Badge variant="default" className="whitespace-nowrap bg-purple-500 text-white hover:bg-purple-600">
+    <Badge variant="default" className="whitespace-nowrap bg-orange-light text-navy-dark hover:bg-orange-light/90">
       {value}
     </Badge>
   )
