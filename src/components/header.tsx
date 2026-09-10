@@ -68,8 +68,22 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className={cn("w-full", className)}>
       <div className="mb-8 flex items-start justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="whitespace-nowrap text-3xl font-bold tracking-tight sm:text-5xl">
+        <div className="min-w-0">
+          <a
+            href="https://btc2bgroup.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-5 inline-flex items-center gap-3"
+          >
+            <img src="/btc2b-logo.png" alt="BTC2B Group" className="h-9 w-9 sm:h-10 sm:w-10" />
+            <span className="font-heading text-sm font-extrabold tracking-tight text-white sm:text-base">
+              BTC2B <span className="font-bold text-white/70">Group</span>
+            </span>
+          </a>
+
+          <p className="eyebrow mb-3">Lightning tools</p>
+
+          <h1 className="font-heading text-3xl font-extrabold leading-[1.05] tracking-[-0.025em] text-white sm:text-5xl">
             {onClearResults ? (
               <button
                 type="button"
@@ -77,13 +91,17 @@ const Header: React.FC<HeaderProps> = ({
                 onClick={onClearResults}
               >
                 {appName}
+                <span className="text-orange">.</span>
               </button>
             ) : (
-              <span>{appName}</span>
+              <span>
+                {appName}
+                <span className="text-orange">.</span>
+              </span>
             )}
           </h1>
-          <p className="text-md text-[hsl(var(--muted-foreground))]">{tagline}</p>
-          <p className="whitespace-nowrap text-xs text-[hsl(var(--secondary-foreground))] sm:text-sm">{subTagline}</p>
+          <p className="mt-3 text-base text-white/80 sm:text-lg">{tagline}</p>
+          <p className="mt-1 font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-white/55 sm:text-xs">{subTagline}</p>
         </div>
 
         <div className="sm:hidden">
@@ -92,7 +110,7 @@ const Header: React.FC<HeaderProps> = ({
               <Button
                 variant="outline"
                 size="icon"
-                className="h-10 w-10 rounded-md border-input"
+                className="h-10 w-10 border-white/60 text-white hover:border-orange hover:bg-orange"
               >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Open menu</span>
@@ -100,7 +118,7 @@ const Header: React.FC<HeaderProps> = ({
             </SheetTrigger>
             <SheetContent
               side="bottom"
-              className="rounded-t-lg bg-[hsl(var(--popover))] pb-8 text-[hsl(var(--popover-foreground))]"
+              className="bg-popover pb-8 text-popover-foreground"
             >
               <SheetHeader>
                 <SheetTitle>Menu</SheetTitle>
@@ -186,15 +204,15 @@ const Header: React.FC<HeaderProps> = ({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="h-10 gap-2 rounded-md border-input px-3"
+                className="h-10 gap-2 border-white/60 px-3 text-white hover:border-orange hover:bg-orange"
               >
                 <Menu className="h-5 w-5" />
-                <span className="text-sm font-medium">Menu</span>
+                <span>Menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-80 bg-[hsl(var(--popover))] text-[hsl(var(--popover-foreground))]"
+              className="w-80 bg-popover text-popover-foreground"
             >
               <DropdownMenuLabel>Tools</DropdownMenuLabel>
               <DropdownMenuItem

@@ -176,9 +176,9 @@ function App() {
   const errorTone = error?.toLowerCase().includes("please enter") ? "warning" : "error"
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <LayoutGroup>
-        <main className="container mx-auto min-h-screen w-full max-w-4xl px-4 pb-8">
+        <main className="container mx-auto w-full max-w-4xl px-4 pb-8">
           <motion.div
             aria-hidden="true"
             className="shrink-0"
@@ -194,14 +194,14 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <div ref={topModuleRef}>
+            <div ref={topModuleRef} className="btc2b-hero px-5 pb-8 pt-7 sm:px-10 sm:pb-10 sm:pt-9">
               <Header
                 onClearResults={invoiceData ? handleClear : undefined}
                 onNavigateToVerifier={handleOpenPaymentHashVerifier}
                 onOpenQRScanner={handleOpenQRScanner}
               />
 
-              <div className="mt-6">
+              <div className="mt-2">
                 <SearchInput
                   ref={inputRef}
                   value={inputValue}
@@ -215,7 +215,7 @@ function App() {
                   isLoading={isLoading}
                   hasResult={!!invoiceData}
                   placeholder="Enter invoice or address"
-                  className="w-full [&_input]:!bg-gray-50 dark:[&_input]:!bg-gray-900"
+                  className="w-full [&_input]:h-14 [&_input]:border-white/25 [&_input]:bg-white/10 [&_input]:px-5 [&_input]:text-base [&_input]:text-white [&_input]:backdrop-blur-sm [&_input]:placeholder:text-white/50 [&_input]:focus-visible:border-orange [&_input]:focus-visible:ring-orange [&_input]:focus-visible:ring-offset-0 [&_button]:right-3 [&_button]:h-9 [&_button]:w-9 [&_button]:bg-orange [&_button]:text-white [&_button]:hover:bg-orange-light [&_button]:hover:text-white"
                   autoFocus
                 />
               </div>
@@ -241,8 +241,8 @@ function App() {
                     transition={{ duration: 0.22, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="flex items-center gap-3 rounded-lg border border-input !bg-gray-50 p-4 text-card-foreground shadow-sm dark:!bg-gray-900">
-                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    <div className="flex items-center gap-3 border border-border border-l-4 border-l-orange bg-card p-4 text-card-foreground shadow-sm">
+                      <Loader2 className="h-4 w-4 animate-spin text-orange" />
                       <div>
                         <p className="text-sm font-medium">Decoding request</p>
                         <p className="text-xs text-muted-foreground">Checking the invoice or address details...</p>
@@ -275,7 +275,7 @@ function App() {
                     transition={{ duration: 0.22, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <InvoiceDetails type={invoiceType} data={invoiceData} className="!bg-gray-50 dark:!bg-gray-900" />
+                    <InvoiceDetails type={invoiceType} data={invoiceData} className="border-t-4 border-t-orange" />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -283,6 +283,21 @@ function App() {
           </motion.section>
         </main>
       </LayoutGroup>
+
+      <footer className="container mx-auto w-full max-w-4xl px-4 pb-10">
+        <div className="flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
+          <a
+            href="https://btc2bgroup.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 font-heading text-[11px] font-bold uppercase tracking-[0.2em] text-navy transition-colors hover:text-orange dark:text-white dark:hover:text-orange"
+          >
+            <img src="/btc2b-logo.png" alt="" className="h-5 w-5" />
+            BTC2B Group
+          </a>
+          <span>Bridging Bitcoin to Business<span className="text-orange">.</span></span>
+        </div>
+      </footer>
 
       <QRScanner
         open={qrScannerOpen}

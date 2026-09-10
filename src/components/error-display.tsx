@@ -34,7 +34,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
         <AlertCircle className="h-4 w-4" />
       )}
       <AlertTitle>{title ?? (isWarning ? "Warning" : "Error")}</AlertTitle>
-      <AlertDescription>{message}</AlertDescription>
+      <AlertDescription className="break-all">{message}</AlertDescription>
     </Alert>
   )
 }

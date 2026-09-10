@@ -164,13 +164,13 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
   const getTypeColor = () => {
     switch (type) {
       case "bolt11":
-        return "bg-blue-500 hover:bg-blue-600"
+        return "bg-navy text-white hover:bg-navy/90 dark:bg-white dark:text-navy"
       case "lnurl":
-        return "bg-purple-500 hover:bg-purple-600"
+        return "bg-orange-light text-navy-dark hover:bg-orange-light/90"
       case "bolt12":
-        return "bg-green-500 hover:bg-green-600"
+        return "border-orange bg-transparent text-orange hover:bg-orange/10"
       case "lightning-address":
-        return "bg-orange-500 hover:bg-orange-600"
+        return "bg-orange text-white hover:bg-orange/90"
       default:
         return ""
     }

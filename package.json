@@ -10,6 +10,8 @@
   "type": "module",
   "dependencies": {
     "@fontsource/geist-mono": "^5.2.8",
+    "@fontsource/montserrat": "^5.3.0",
+    "@fontsource/nunito": "^5.3.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
