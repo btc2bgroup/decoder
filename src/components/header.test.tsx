@@ -66,7 +66,7 @@ describe("Header", () => {
     })
 
     expect(container.querySelector("h1 button")).toBeNull()
-    expect(container.querySelector("h1")?.textContent).toBe("Lightning Decoder")
+    expect(container.querySelector("h1")?.textContent).toBe("Lightning Decoder.")
 
     await act(async () => {
       root.unmount()
