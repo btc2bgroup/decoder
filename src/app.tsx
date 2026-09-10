@@ -286,8 +286,8 @@ function App() {
         </main>
       </LayoutGroup>
 
-      <footer className="container mx-auto w-full max-w-4xl px-4 pb-10">
-        <div className="flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
+      <footer className="mt-auto w-full border-t border-border bg-card">
+        <div className="container mx-auto flex w-full max-w-4xl flex-col items-start justify-between gap-3 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
           <a
             href="https://btc2bgroup.com"
             target="_blank"
