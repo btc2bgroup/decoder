@@ -27,26 +27,14 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  )
+  // The BTC2B design is dark-only: any stored or default preference resolves to "dark".
+  void defaultTheme
+  const [theme, setTheme] = useState<Theme>("dark")
 
   useEffect(() => {
     const root = window.document.documentElement
-
-    root.classList.remove("light", "dark")
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light"
-
-      root.classList.add(systemTheme)
-      return
-    }
-
-    root.classList.add(theme)
+    root.classList.remove("light", "system")
+    root.classList.add("dark")
   }, [theme])
 
   const value = {

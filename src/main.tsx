@@ -16,7 +16,7 @@ import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ThemeProvider defaultTheme="system" storageKey="lightning-decoder-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="lightning-decoder-theme">
       <App />
     </ThemeProvider>
   </React.StrictMode>,

@@ -16,8 +16,7 @@ import {
   SheetTrigger,
 } from "./ui/sheet"
 import { cn } from "../lib/utils"
-import { useTheme } from "./theme-provider"
-import { Menu, Shield, QrCode, Sun, Moon, Monitor, Check } from "lucide-react"
+import { Menu, Shield, QrCode } from "lucide-react"
 
 const GithubIcon = () => (
   <svg
@@ -57,7 +56,6 @@ const Header: React.FC<HeaderProps> = ({
   onOpenQRScanner,
   className,
 }) => {
-  const { theme, setTheme } = useTheme()
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
 
   const handleMobileAction = (action?: () => void) => {
@@ -146,37 +144,6 @@ const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 <div className="space-y-2 border-t pt-4">
-                  <div className="text-sm font-medium text-muted-foreground">Theme</div>
-                  <Button
-                    variant="ghost"
-                    className="h-12 w-full justify-start gap-3 px-0 text-base"
-                    onClick={() => handleMobileAction(() => setTheme("light"))}
-                  >
-                    <Sun className="h-5 w-5" />
-                    Light
-                    {theme === "light" && <Check className="ml-auto h-5 w-5" />}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="h-12 w-full justify-start gap-3 px-0 text-base"
-                    onClick={() => handleMobileAction(() => setTheme("dark"))}
-                  >
-                    <Moon className="h-5 w-5" />
-                    Dark
-                    {theme === "dark" && <Check className="ml-auto h-5 w-5" />}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="h-12 w-full justify-start gap-3 px-0 text-base"
-                    onClick={() => handleMobileAction(() => setTheme("system"))}
-                  >
-                    <Monitor className="h-5 w-5" />
-                    System
-                    {theme === "system" && <Check className="ml-auto h-5 w-5" />}
-                  </Button>
-                </div>
-
-                <div className="space-y-2 border-t pt-4">
                   <div className="text-sm font-medium text-muted-foreground">Resources</div>
                   <Button
                     asChild
@@ -232,33 +199,6 @@ const Header: React.FC<HeaderProps> = ({
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuLabel>Theme</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => setTheme("light")}
-                className="gap-2"
-              >
-                <Sun className="h-4 w-4" />
-                <span>Light</span>
-                {theme === "light" && <Check className="ml-auto h-4 w-4" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setTheme("dark")}
-                className="gap-2"
-              >
-                <Moon className="h-4 w-4" />
-                <span>Dark</span>
-                {theme === "dark" && <Check className="ml-auto h-4 w-4" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setTheme("system")}
-                className="gap-2"
-              >
-                <Monitor className="h-4 w-4" />
-                <span>System</span>
-                {theme === "system" && <Check className="ml-auto h-4 w-4" />}
-              </DropdownMenuItem>
-
-              <DropdownMenuSeparator />
               <DropdownMenuLabel>Resources</DropdownMenuLabel>
               <DropdownMenuItem asChild>
                 <a

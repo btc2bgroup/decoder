@@ -176,17 +176,9 @@ function App() {
   const errorTone = error?.toLowerCase().includes("please enter") ? "warning" : "error"
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
       <LayoutGroup>
         <main className="container mx-auto w-full max-w-4xl px-4 pb-8">
-          <motion.div
-            aria-hidden="true"
-            className="shrink-0"
-            initial={false}
-            animate={{ height: shouldLiftContent ? 32 : idleTopOffset }}
-            transition={{ duration: 0.32, ease: "easeInOut" }}
-          />
-
           <motion.section
             layout
             className="w-full"
@@ -194,7 +186,16 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <div ref={topModuleRef} className="btc2b-hero px-5 pb-8 pt-7 sm:px-10 sm:pb-10 sm:pt-9">
+            {/* Full-bleed navy hero: breaks out of the centered column to span the viewport */}
+            <div className="btc2b-hero relative left-1/2 w-screen -translate-x-1/2">
+              <motion.div
+                aria-hidden="true"
+                className="shrink-0"
+                initial={false}
+                animate={{ height: shouldLiftContent ? 32 : idleTopOffset }}
+                transition={{ duration: 0.32, ease: "easeInOut" }}
+              />
+              <div ref={topModuleRef} className="container mx-auto w-full max-w-4xl px-4 pb-8 sm:pb-10">
               <Header
                 onClearResults={invoiceData ? handleClear : undefined}
                 onNavigateToVerifier={handleOpenPaymentHashVerifier}
@@ -218,6 +219,7 @@ function App() {
                   className="w-full [&_input]:h-14 [&_input]:border-white/25 [&_input]:bg-white/10 [&_input]:px-5 [&_input]:text-base [&_input]:text-white [&_input]:backdrop-blur-sm [&_input]:placeholder:text-white/50 [&_input]:focus-visible:border-orange [&_input]:focus-visible:ring-orange [&_input]:focus-visible:ring-offset-0 [&_button]:right-3 [&_button]:h-9 [&_button]:w-9 [&_button]:bg-orange [&_button]:text-white [&_button]:hover:bg-orange-light [&_button]:hover:text-white"
                   autoFocus
                 />
+              </div>
               </div>
             </div>
 
